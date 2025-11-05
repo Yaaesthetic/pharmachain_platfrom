@@ -1,0 +1,112 @@
+services:
+  vault:
+    image: hashicorp/vault:latest
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: 'myroot'
+      VAULT_DEV_LISTEN_ADDRESS: '0.0.0.0:8200'
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./vault/data:/vault/data
+      - ./vault/logs:/vault/logs
+    command: server -dev
+    networks:
+      - pharmachain-network
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: pharmachain_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - pharmachain-network
+
+#  pharmachain-app:
+#    build: .
+#    container_name: pharmachain-app
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pharmachain_db
+#      SPRING_CLOUD_VAULT_URI: http://vault:8200
+#      SPRING_CLOUD_VAULT_TOKEN: myroot
+#    depends_on:
+#      - vault
+#      - postgres
+#    networks:
+#      - pharmachain-network
+
+networks:
+  pharmachain-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#services:
+#  postgres:
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: keycloak
+#      POSTGRES_USER: keycloak
+#      POSTGRES_PASSWORD: password
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
+#
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:latest
+#    command: start-dev
+#    environment:
+#      KC_HOSTNAME: localhost
+#      KC_HOSTNAME_PORT: 8080
+#      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+#      KC_HTTP_ENABLED: true
+#      KC_HOSTNAME_STRICT_HTTPS: false
+#      KC_HEALTH_ENABLED: true
+#      KC_METRICS_ENABLED: true
+#      KC_DB: postgres
+#      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+#      KC_DB_USERNAME: keycloak
+#      KC_DB_PASSWORD: password
+#      KEYCLOAK_ADMIN: admin
+#      KEYCLOAK_ADMIN_PASSWORD: admin123
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - postgres
+#
+#volumes:
+#  postgres_data:
