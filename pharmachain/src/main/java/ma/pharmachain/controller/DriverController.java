@@ -40,7 +40,7 @@ public class DriverController {
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("keycloakUserId", jwt.getSubject());
         userInfo.put("username", jwt.getClaim("preferred_username"));
-        userInfo.put("email", jwt.getClaim("email"));
+        userInfo.put("email", shouldExposeSensitiveEmail(authentication) ? jwt.getClaim("email") : "********");
         userInfo.put("firstName", jwt.getClaim("given_name"));
         userInfo.put("lastName", jwt.getClaim("family_name"));
         userInfo.put("code", jwt.getClaim("code"));
@@ -49,6 +49,11 @@ public class DriverController {
         userInfo.put("roles", authentication.getAuthorities());
 
         return ResponseEntity.ok(userInfo);
+    }
+
+    private boolean shouldExposeSensitiveEmail(JwtAuthenticationToken authentication) {
+        return authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 
     /**

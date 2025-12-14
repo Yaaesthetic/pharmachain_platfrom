@@ -201,8 +201,8 @@ export const AdminManagement = () => {
         </div>
         {isLoading && filteredAdmins.length === 0 ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-            <span className="ml-2 text-gray-600">Loading admins...</span>
+            <Loader2 className="h-6 w-6 animate-spin text-teal-600" />
+            <span className="ml-2 text-slate-600">Loading admins...</span>
           </div>
         ) : (
           <Table>
@@ -233,7 +233,7 @@ export const AdminManagement = () => {
                       {admin.username}
                       {user?.id === admin.id && <span className="ml-2 text-xs text-blue-600 font-semibold">(You)</span>}
                     </TableCell>
-                    <TableCell>{admin.email || "-"}</TableCell>
+                    <TableCell>{admin.email ?? "********"}</TableCell>
                     <TableCell>
                       <Badge className={admin.isActive ? "bg-green-500" : "bg-red-500"}>
                         {admin.isActive ? "Active" : "Inactive"}
