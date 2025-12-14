@@ -39,7 +39,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (storedToken && storedUser) {
       setAccessToken(storedToken)
-      setUser(JSON.parse(storedUser))
+      const parsedUser: User = JSON.parse(storedUser)
+      setUser({
+        ...parsedUser,
+        email: sanitizeEmail(parsedUser.email, parsedUser.roles),
+      })
     }
     setIsLoading(false)
   }, [])
@@ -55,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: User = {
         keycloakUserId: decodedToken.sub,
         username: decodedToken.preferred_username,
-        email: decodedToken.email,
+        email: sanitizeEmail(decodedToken.email, decodedToken.realm_access?.roles),
         firstName: decodedToken.given_name,
         lastName: decodedToken.family_name,
         code: decodedToken.code,
@@ -126,4 +130,12 @@ function decodeJWT(token: string): any {
     console.error("[v0] Failed to decode JWT:", error)
     return {}
   }
+}
+
+function sanitizeEmail(email: string | undefined, roles: string[] | undefined): string {
+  const hasAdminRole = roles?.includes("ADMIN")
+  if (!email || !hasAdminRole) {
+    return "********"
+  }
+  return email
 }
